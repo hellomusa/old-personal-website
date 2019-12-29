@@ -1,0 +1,33 @@
+{% extends "index.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+<link type="text/css" rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<script src='https://cdnjs.cloudflare.com/ajax/libs/typed.js/1.1.1/typed.min.js'></script>
+
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename = 'home.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="wrapper scroll-wrapper">
+        <div class="top-text">
+            <p style='font-size:40px'> Hi, I'm</p>
+            <p class="text-title desktop-view">Musa Ali</p>
+            <p class="text-title mobile-view">Musa Ali</p>
+            <div>
+                <a target="_blank" href="https://github.com/helloMusa">
+                    <img class="title-logo" src="static/images/github.svg">
+                </a>
+                <a target="_blank" href="https://www.linkedin.com/in/musa-ali-cu/">
+                    <img class="title-logo" src="static/images/linkedin.svg">
+                </a>
+            </div>
+        </div>
+        <div class="middle-text">
+            <p class="text-content">text goes here</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
