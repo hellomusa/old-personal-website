@@ -6,7 +6,7 @@ body {
 .navbar-ref {
   color: #808080;
   font-family: 'Open Sans', sans-serif;
-  font-size: 16px;
+  font-size: 20px;
 }
 
 .navbar-ul {
@@ -19,7 +19,7 @@ body {
 .list-inline {
   display: flex;
   text-decoration: none;
-  justify-content: center;
+  justify-content: space-around;
   margin:20px 0;
   width: 50%;
 }
