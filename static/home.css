@@ -102,7 +102,7 @@ ul li a {
   position: relative;
   background: rgba(38, 38, 38, 0.8);
   width: 80%;
-  height: 260px;
+  height: 200px;
   border-radius: 8px;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
   margin: auto;
@@ -116,35 +116,6 @@ ul li a {
   border-top-right-radius: 8px;
   padding: 1px 8px;
 }
-#terminal .terminal .window-title .win-buttons {
-  position: relative;
-  width: 15%;
-  left: -11px;
-  float: left;
-  margin: 0;
-}
-#terminal .terminal .window-title .button {
-  display: inline-block;
-  text-align: center;
-  width: 10px;
-  height: 10px;
-  border: 0.5px solid;
-  border-radius: 100px;
-  vertical-align: middle;
-  margin: 3px 2px 3px 0;
-}
-#terminal .terminal .window-title #close {
-  background: #e25544;
-  border-color: #d84b3a;
-}
-#terminal .terminal .window-title #min {
-  background: #f5b640;
-  border-color: #e0a12b;
-}
-#terminal .terminal .window-title #max {
-  background: #7cb058;
-  border-color: #6fa44b;
-}
 #terminal .terminal .title {
   position: relative;
   display: inline-block;
@@ -156,25 +127,12 @@ ul li a {
   top: 0.5px;
   left: -43px;
 }
-#terminal .terminal .prompt {
-  font-size: 98%;
-}
-#terminal .terminal .user {
-  color: #ea7e7d;
-  letter-spacing: 0.002em;
-  padding-right: 3px;
-}
-#terminal .terminal .at {
-  color: #e8d880;
-  padding-right: 2px;
-}
-#terminal .terminal .path {
-  color: #7ecdcb;
-  letter-spacing: 0.002em;
-  padding-right: 2px;
-}
 #terminal .terminal .caret {
   color: #50cd70;
+  dispay: inline;
+}
+#terminal .terminal .firstCaret {
+  dispay: inline;
 }
 #terminal .message {
   position: relative;
@@ -185,38 +143,6 @@ ul li a {
   padding: 1.5vh 0 0;
   z-index: 999;
 }
-#terminal .message span {
-  font-size: 90%;
-  font-weight: 300;
-  line-height: 1.5;
-  letter-spacing: 0.045em;
-  margin-bottom: 1em;
-}
-#terminal .message span a {
-  font-family: "Source Code Pro", monospace;
-  border-bottom: 1px dotted rgba(255, 255, 255, 0.75);
-}
-#terminal .message form input {
-  background: transparent;
-  border: none;
-  outline: none;
-  caret-color: #50cd70;
-}
-#terminal .message form input:focus {
-  color: rgba(255, 255, 255, 0.75);
-}
-#terminal .message .typed-cursor {
-  color: rgba(255, 255, 255, 0.9);
-}
-#terminal a {
-  color: rgba(255, 255, 255, 0.7);
-  text-decoration: none;
-}
-#terminal a:hover {
-  color: rgba(255, 255, 255, 0.9);
-  border-bottom: 1px dotted rgba(255, 255, 255, 0.9);
-}
-
 @media only screen and (max-width: 1094px) {
   .fixed-wrapper {
     position: static;
@@ -255,7 +181,7 @@ ul li a {
 
 @media only screen and (max-width: 600px) {
   
-  #terminal .terminal .window-title .win-buttons{
+  #terminal .terminal .window-title{
     width: 60px;
   }
   .top-text p {
