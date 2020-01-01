@@ -75,5 +75,3 @@ def github_fetcher():
 	# STOP LOOP
 	else:
 		print('Something went wrong.')
-
-
