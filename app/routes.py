@@ -1,16 +1,8 @@
-from flask import Flask, render_template, url_for, redirect
-from fetcher import *
-from forms import LoginForm
-
-app = Flask(__name__)
-
-# Get secret key from .txt file
-with open('tokens.txt', 'r') as f:
-	f.readline()
-	SECRET_KEY = f.readline().strip()
-
-app.config['SECRET_KEY'] = SECRET_KEY
-
+from flask import render_template, url_for, redirect
+from app import app
+from app.forms import LoginForm
+from app.fetcher import *
+from app.models import User, Post
 
 @app.route("/")
 def home():
@@ -36,6 +28,3 @@ def login():
 		if form.username.data == 'musaali' and form.password.data == 'admin':
 			return redirect(url_for('home'))
 	return render_template('login.html', form=form)
-
-if __name__ == '__main__':
-    app.run(debug=True)
