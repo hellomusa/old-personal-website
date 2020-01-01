@@ -23,6 +23,19 @@ def blog():
 	posts = Post.query.all()
 	return render_template('blog.html', posts=posts)
 
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+	if current_user.is_authenticated:
+		return redirect(url_for('home'))
+
+	form = LoginForm()
+	if form.validate_on_submit():
+		user = User.query.first()
+		if user and bcrypt.check_password_hash(user.password, form.password.data):
+			login_user(user, remember=False)
+			return redirect(url_for('home'))
+	return render_template('login.html', form=form)
+
 @app.route("/create", methods=['GET', 'POST'])
 def create():
 	if not current_user.is_authenticated:
@@ -37,15 +50,14 @@ def create():
 
 	return render_template('create.html', form=form)
 
-@app.route("/login", methods=['GET', 'POST'])
-def login():
-	if current_user.is_authenticated:
+@app.route('/post/<post_title>')
+def post(post_title):
+	db_titles = [post.title.replace(" ", "-") for post in Post.query.all()]
+	print(db_titles)
+	if post_title not in db_titles:
 		return redirect(url_for('home'))
+	else:
+		post_title = post_title.replace("-", " ")
+		post = Post.query.filter_by(title=post_title).first()
 
-	form = LoginForm()
-	if form.validate_on_submit():
-		user = User.query.first()
-		if user and bcrypt.check_password_hash(user.password, form.password.data):
-			login_user(user, remember=False)
-			return redirect(url_for('home'))
-	return render_template('login.html', form=form)
+	return render_template('post.html',post=post)
