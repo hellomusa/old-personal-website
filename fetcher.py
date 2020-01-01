@@ -3,8 +3,13 @@ import json, time, datetime
 import math
 
 def github_fetcher():
+
+	# Get token from .txt file
+	with open('tokens.txt', 'r') as f:
+		token = f.readline().strip()
+
 	url = 'https://api.github.com/users/hellomusa/repos'
-	github_token = '068f3c621b92dadec530fa76b3eaa7d0a9811ab2'
+	github_token = token
 	params = {'access_token': github_token}
 
 	response = requests.get(url, params=params)
@@ -18,9 +23,12 @@ def github_fetcher():
 	# KEEP LOOPING
 	while True:
 		data = json.loads(response.content)
+
+		# Get each repository name
 		for repo in data:
 			repo_names.append(repo['full_name'][10:])
 
+		# Get each commit time for repos in repo list
 		for repo_name in repo_names:
 			commit_url = f'https://api.github.com/repos/hellomusa/{repo_name}/commits/master'
 			response = requests.get(commit_url, params=params)
@@ -35,6 +43,9 @@ def github_fetcher():
 			else:
 				print('Something went wrong.')
 				break
+
+
+		# Compare current time with latest commit time, return the difference
 
 		commit_times = [commits[repo] for repo in commits]
 		newest_commit_time = max(commit_times)
