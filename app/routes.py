@@ -1,11 +1,14 @@
 from flask import render_template, url_for, redirect
-from app import app
-from app.forms import LoginForm
+from app import app, db, bcrypt
+from app.forms import LoginForm, PostForm
 from app.fetcher import *
 from app.models import User, Post
+from flask_login import login_user, current_user
+
 
 @app.route("/")
 def home():
+	# Reminder: remove infinite loop, it is not needed (?)
 	repo, time = github_fetcher()
 	return render_template('home.html', repo_name=repo, time=time)
 
@@ -17,14 +20,32 @@ def projects():
 
 @app.route("/blog")
 def blog():
-    return render_template('blog.html')
+	posts = Post.query.all()
+	return render_template('blog.html', posts=posts)
 
+@app.route("/create", methods=['GET', 'POST'])
+def create():
+	if not current_user.is_authenticated:
+		return redirect(url_for('login'))
+
+	form = PostForm()
+	if form.validate_on_submit():
+		post = Post(title=form.title.data, subtitle=form.subtitle.data, content=form.content.data)
+		db.session.add(post)
+		db.session.commit()
+		return redirect(url_for('home'))
+
+	return render_template('create.html', form=form)
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+	if current_user.is_authenticated:
+		return redirect(url_for('home'))
+
 	form = LoginForm()
 	if form.validate_on_submit():
-		# Placeholder login info
-		if form.username.data == 'musaali' and form.password.data == 'admin':
+		user = User.query.first()
+		if user and bcrypt.check_password_hash(user.password, form.password.data):
+			login_user(user, remember=False)
 			return redirect(url_for('home'))
 	return render_template('login.html', form=form)
