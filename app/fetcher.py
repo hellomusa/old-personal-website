@@ -20,10 +20,6 @@ def github_fetcher():
 	if response:
 		data = json.loads(response.content)
 
-	# KEEP LOOPING
-	while True:
-		data = json.loads(response.content)
-
 		# Get each repository name
 		for repo in data:
 			repo_names.append(repo['full_name'][10:])
@@ -38,12 +34,8 @@ def github_fetcher():
 				commit_date = data['commit']['author']['date']
 				commit_date_dt = datetime.datetime.strptime(commit_date, "%Y-%m-%dT%H:%M:%SZ")
 				commits[repo_name] = commit_date_dt
-
-			# STOP LOOP
 			else:
 				print('Something went wrong.')
-				break
-
 
 		# Compare current time with latest commit time, return the difference
 
@@ -72,6 +64,5 @@ def github_fetcher():
 
 		return return_list
 
-	# STOP LOOP
 	else:
 		print('Something went wrong.')

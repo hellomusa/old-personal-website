@@ -23,7 +23,6 @@ def get_post(post_title):
 
 @app.route("/")
 def home():
-	# Reminder: remove infinite loop, it is not needed (?)
 	repo, time = github_fetcher()
 	return render_template('home.html', repo_name=repo, time=time)
 
