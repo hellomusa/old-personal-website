@@ -19,8 +19,8 @@
                     </div>
                     <div class="message">
                         <br>
-                        <p><span>></span><span class="caret">$</span><span>  pushed to <a href="https://github.com/helloMusa/{{ repo_name}}">{{ repo_name }}</a> ({{ time }} ago)</span></p>
-                        <p><span>></span><span class="caret">$</span><span>  wrote about (blog post)</span></p>
+                        <p><span>></span><span class="caret">$</span><span>  pushed to <a href="https://github.com/helloMusa/{{ repo_name}}">{{ repo_name }}</a> ({{ repo_time }} ago)</span></p>
+                        <p><span>></span><span class="caret">$</span><span>  wrote about <a href="{{ url_for('post', post_title=blog_url) }}"> {{ blog_name }} </a></span></p>
                         <p><span>></span><span class="caret">$</span><span>  commented on (reddit post)</span></p>
                     </div>
                 </div>

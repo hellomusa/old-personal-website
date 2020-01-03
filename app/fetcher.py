@@ -1,6 +1,25 @@
 import requests
 import json, time, datetime
 import math
+from app import db
+from app.models import Post
+
+
+def get_post(post_title):
+	if not current_user.is_authenticated:
+		return redirect(url_for('login'))
+
+	db_titles = [post.title.replace(" ", "-") for post in Post.query.all()]
+
+	if post_title not in db_titles:
+		return redirect(url_for('home'))
+
+	post_title = post_title.replace("-", " ")
+	post = Post.query.filter_by(title=post_title).first()
+
+	print('GOOD!')
+	return post
+
 
 def github_fetcher():
 
@@ -66,3 +85,10 @@ def github_fetcher():
 
 	else:
 		print('Something went wrong.')
+
+
+def blog_fetcher():
+	latest_post = Post.query.all()[-1]
+	post_title = latest_post.title
+
+	return post_title

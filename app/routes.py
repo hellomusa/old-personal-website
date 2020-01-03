@@ -23,8 +23,14 @@ def get_post(post_title):
 
 @app.route("/")
 def home():
-	repo, time = github_fetcher()
-	return render_template('home.html', repo_name=repo, time=time)
+	latest_repo, repo_time = github_fetcher()
+	latest_blog = blog_fetcher()
+	latest_blog_url = latest_blog.replace(' ', '-')
+	return render_template('home.html', 
+							repo_name=latest_repo, 
+							repo_time=repo_time, 
+							blog_name=latest_blog,
+							blog_url=latest_blog_url)
 
 
 @app.route("/projects")
