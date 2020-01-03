@@ -1,24 +1,22 @@
-import requests
-import json, time, datetime
-import math
+import requests, json, math, praw
+from datetime import datetime
 from app import db
 from app.models import Post
 
 
-def get_post(post_title):
-	if not current_user.is_authenticated:
-		return redirect(url_for('login'))
+def get_time_difference(current_time, new_time, var):
+	return_list = [var]
+	difference = current_time - new_time
+	minutes = difference.seconds//60
+	hours = minutes//60
+	minutes -= 60*hours
 
-	db_titles = [post.title.replace(" ", "-") for post in Post.query.all()]
+	if (60*hours + minutes) < 60:
+		return_list.append(f'{minutes} minutes')
+	else:
+		return_list.append(f'{math.ceil(hours)} hours')
 
-	if post_title not in db_titles:
-		return redirect(url_for('home'))
-
-	post_title = post_title.replace("-", " ")
-	post = Post.query.filter_by(title=post_title).first()
-
-	print('GOOD!')
-	return post
+	return return_list
 
 
 def github_fetcher():
@@ -51,7 +49,7 @@ def github_fetcher():
 			if response:
 				data = json.loads(response.content)
 				commit_date = data['commit']['author']['date']
-				commit_date_dt = datetime.datetime.strptime(commit_date, "%Y-%m-%dT%H:%M:%SZ")
+				commit_date_dt = datetime.strptime(commit_date, "%Y-%m-%dT%H:%M:%SZ")
 				commits[repo_name] = commit_date_dt
 			else:
 				print('Something went wrong.')
@@ -66,20 +64,10 @@ def github_fetcher():
 			if commits[repo] == newest_commit_time:
 				newest_commit_repo = repo
 
-		current_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-		current_time_dt = datetime.datetime.strptime(current_time, "%Y-%m-%d %H:%M:%S")
+		current_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+		current_time_dt = datetime.strptime(current_time, "%Y-%m-%d %H:%M:%S")
 
-		difference = current_time_dt - newest_commit_time
-		minutes = difference.seconds//60
-		hours = minutes//60
-		minutes -= 60*hours
-
-		return_list = [newest_commit_repo]
-
-		if (60*hours + minutes) < 60:
-			return_list.append(f'{minutes} minutes')
-		else:
-			return_list.append(f'{math.ceil(hours)} hours')
+		return_list = get_time_difference(current_time_dt, newest_commit_time, newest_commit_repo)
 
 		return return_list
 
@@ -92,3 +80,31 @@ def blog_fetcher():
 	post_title = latest_post.title
 
 	return post_title
+
+
+def reddit_fetcher():
+	with open('tokens.txt', 'r') as f:
+		f.readline()
+		f.readline()
+		CLIENT_ID = f.readline().strip()
+		CLIENT_SECRET = f.readline().strip()
+
+	reddit = praw.Reddit(user_agent='Comment Extraction by /u/hellomusa', 
+						client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
+
+	user = reddit.redditor('hellomusa')
+	comments = [comment for comment in user.comments.new()]
+	latest_comment = comments[0]
+	link_permalink = latest_comment.permalink
+	comment_date = datetime.utcfromtimestamp(latest_comment.created_utc)
+
+	current_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+	current_time_dt = datetime.strptime(current_time, "%Y-%m-%d %H:%M:%S")
+
+	return_list = get_time_difference(current_time_dt, comment_date, link_permalink)
+
+	return return_list
+
+
+
+

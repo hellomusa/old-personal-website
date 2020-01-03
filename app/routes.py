@@ -26,11 +26,14 @@ def home():
 	latest_repo, repo_time = github_fetcher()
 	latest_blog = blog_fetcher()
 	latest_blog_url = latest_blog.replace(' ', '-')
+	latest_comment_url, comment_time = reddit_fetcher()
 	return render_template('home.html', 
 							repo_name=latest_repo, 
 							repo_time=repo_time, 
 							blog_name=latest_blog,
-							blog_url=latest_blog_url)
+							blog_url=latest_blog_url,
+							comment_url=latest_comment_url,
+							comment_time=comment_time)
 
 
 @app.route("/projects")
