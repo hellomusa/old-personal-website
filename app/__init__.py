@@ -15,4 +15,10 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 
+from app.fetcher import *
+
+bf = BackgroundFetcher()
+bf.background_scheduler()
+
+
 from app import routes
