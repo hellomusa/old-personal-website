@@ -1,7 +1,48 @@
 import requests, json, math, praw
 from datetime import datetime
 from app import db
-from app.models import Post
+from app.models import Post, Fetch
+from apscheduler.schedulers.background import BackgroundScheduler
+
+
+sched = BackgroundScheduler()
+
+
+class BackgroundFetcher():
+	def __init__(self, fetch_list=None):
+		self.fetch_list = []
+
+	def fetch_all(self):
+		self.fetch_list = [github_fetcher(), blog_fetcher(), reddit_fetcher()]
+		fetch = Fetch.query.first()
+		fetch.repo_title, fetch.repo_time = self.fetch_list[0]
+		fetch.blog_title, fetch.blog_url = self.fetch_list[1]
+		fetch.comment_url, fetch.comment_time = self.fetch_list[2]
+		db.session.commit()
+
+	def background_scheduler(self):
+		sched.add_job(self.fetch_all, 'interval', seconds=10)
+		sched.start()
+
+
+def db_to_list():
+	fetch = Fetch.query.first()
+	fetch_list = [fetch.repo_title, fetch.repo_time,
+				  fetch.blog_title, fetch.blog_url,
+				  fetch.comment_url, fetch.comment_time]
+	return fetch_list
+
+
+def get_post(post_title):
+	db_titles = [post.title.replace(" ", "-") for post in Post.query.all()]
+
+	if post_title not in db_titles:
+		return redirect(url_for('home'))
+
+	post_title = post_title.replace("-", " ")
+	post = Post.query.filter_by(title=post_title).first()
+
+	return post
 
 
 def get_time_difference(current_time, new_time, var):
@@ -78,8 +119,9 @@ def github_fetcher():
 def blog_fetcher():
 	latest_post = Post.query.all()[-1]
 	post_title = latest_post.title
+	post_url = post_title.replace(" ", "-")
 
-	return post_title
+	return [post_title, post_url]
 
 
 def reddit_fetcher():
