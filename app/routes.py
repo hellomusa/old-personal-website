@@ -2,37 +2,19 @@ from flask import render_template, url_for, redirect, request
 from app import app, db, bcrypt
 from app.forms import LoginForm, PostForm
 from app.fetcher import *
-from app.models import User, Post
+from app.models import User, Post, Fetch
 from flask_login import login_user, current_user
-
-
-def get_post(post_title):
-	if not current_user.is_authenticated:
-		return redirect(url_for('login'))
-
-	db_titles = [post.title.replace(" ", "-") for post in Post.query.all()]
-
-	if post_title not in db_titles:
-		return redirect(url_for('home'))
-
-	post_title = post_title.replace("-", " ")
-	post = Post.query.filter_by(title=post_title).first()
-
-	return post
 
 
 @app.route("/")
 def home():
-	latest_repo, repo_time = github_fetcher()
-	latest_blog = blog_fetcher()
-	latest_blog_url = latest_blog.replace(' ', '-')
-	latest_comment_url, comment_time = reddit_fetcher()
+	repo_name, repo_time, blog_name, blog_url, comment_url, comment_time = db_to_list()
 	return render_template('home.html', 
-							repo_name=latest_repo, 
+							repo_name=repo_name, 
 							repo_time=repo_time, 
-							blog_name=latest_blog,
-							blog_url=latest_blog_url,
-							comment_url=latest_comment_url,
+							blog_name=blog_name,
+							blog_url=blog_url,
+							comment_url=comment_url,
 							comment_time=comment_time)
 
 
@@ -79,6 +61,9 @@ def create():
 
 @app.route('/post/<post_title>')
 def post(post_title):
+	if not current_user.is_authenticated:
+		return redirect(url_for('login'))
+
 	post = get_post(post_title)
 
 	return render_template('post.html',post=post)
@@ -86,6 +71,9 @@ def post(post_title):
 
 @app.route('/post/<post_title>/update', methods=['GET', 'POST'])
 def update(post_title):
+	if not current_user.is_authenticated:
+		return redirect(url_for('login'))
+
 	post = get_post(post_title)
 	form = PostForm()
 
@@ -104,6 +92,9 @@ def update(post_title):
 
 @app.route('/post/<post_title>/delete', methods=['POST'])
 def delete(post_title):
+	if not current_user.is_authenticated:
+		return redirect(url_for('login'))
+
 	post = get_post(post_title)
 	db.session.delete(post)
 	db.session.commit()
