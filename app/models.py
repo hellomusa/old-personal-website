@@ -25,3 +25,16 @@ class Post(db.Model):
 
 	def __repr__(self):
 		return f"Post('{self.title}', '{self.date_posted}')"
+
+
+class Fetch(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	repo_title = db.Column(db.String(100), nullable=False)
+	repo_time = db.Column(db.String(100), nullable=False)
+	blog_title = db.Column(db.String(100), nullable=False)
+	blog_url = db.Column(db.String(100), nullable=False)
+	comment_url = db.Column(db.String(100), nullable=False)
+	comment_time = db.Column(db.String(100), nullable=False)
+
+	def __repr__(self):
+		return f"Fetch(Github: '{self.repo_title}', '{self.repo_time}'. Blog: '{self.blog_title, self.blog_url}'. Reddit: '{self.comment_url}', '{self.comment_time}')"
