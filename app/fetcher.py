@@ -50,12 +50,19 @@ def get_time_difference(current_time, new_time, var):
 	difference = current_time - new_time
 	minutes = difference.seconds//60
 	hours = minutes//60
+	days = difference.days
 	minutes -= 60*hours
 
-	if (60*hours + minutes) < 60:
+	# If minutes greater than 60, use minutes
+	if days > 1:
+		return_list.append(f'{days} days')
+	elif (60*hours + minutes) < 60:
 		return_list.append(f'{minutes} minutes')
-	else:
+	# If minutes greater than 60, use hours
+	else: #(60* hours + minutes) > 60:
 		return_list.append(f'{math.ceil(hours)} hours')
+
+
 
 	return return_list
 

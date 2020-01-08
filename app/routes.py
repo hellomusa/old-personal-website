@@ -1,9 +1,10 @@
-from flask import render_template, url_for, redirect, request
+from flask import render_template, url_for, redirect, request, Markup
 from app import app, db, bcrypt
+from markdown import markdown
 from app.forms import LoginForm, PostForm
 from app.fetcher import *
 from app.models import User, Post, Fetch
-from flask_login import login_user, current_user
+from flask_login import login_user, current_user, login_required
 
 
 @app.route("/")
@@ -35,6 +36,7 @@ def login():
 		return redirect(url_for('home'))
 
 	form = LoginForm()
+
 	if form.validate_on_submit():
 		user = User.query.first()
 		if user and bcrypt.check_password_hash(user.password, form.password.data):
@@ -59,7 +61,7 @@ def create():
 	return render_template('create.html', form=form, legend='Create Post')
 
 
-@app.route('/post/<post_title>')
+@app.route('/blog/<post_title>')
 def post(post_title):
 	if not current_user.is_authenticated:
 		return redirect(url_for('login'))
@@ -69,7 +71,7 @@ def post(post_title):
 	return render_template('post.html',post=post)
 
 
-@app.route('/post/<post_title>/update', methods=['GET', 'POST'])
+@app.route('/blog/<post_title>/update', methods=['GET', 'POST'])
 def update(post_title):
 	if not current_user.is_authenticated:
 		return redirect(url_for('login'))
@@ -90,7 +92,7 @@ def update(post_title):
 	return render_template('create.html', form=form, legend='Update Post')
 
 
-@app.route('/post/<post_title>/delete', methods=['POST'])
+@app.route('/blog/<post_title>/delete', methods=['GET', 'POST'])
 def delete(post_title):
 	if not current_user.is_authenticated:
 		return redirect(url_for('login'))
@@ -98,4 +100,10 @@ def delete(post_title):
 	post = get_post(post_title)
 	db.session.delete(post)
 	db.session.commit()
+
 	return redirect(url_for('home'))
+
+
+@app.template_filter("markdown")
+def render_markdown(markdown_text):
+	return Markup(markdown(markdown_text))
