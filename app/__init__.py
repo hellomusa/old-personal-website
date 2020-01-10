@@ -2,7 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
-from flaskext_markdown import Markdown
+from flaskext.markdown import Markdown
 
 # Get secret key from .txt file
 with open('tokens.txt', 'r') as f:
