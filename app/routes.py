@@ -32,7 +32,7 @@ def post(post_title):
 	return render_template('post.html',post=post)
 
 
-@app.route("/create", methods=['GET', 'POST'])
+@app.route("/blog/create", methods=['GET', 'POST'])
 def create():
 	if not current_user.is_authenticated:
 		return redirect(url_for('login'))
@@ -46,6 +46,26 @@ def create():
 
 	return render_template('create.html', form=form, legend='Create Post')
 
+
+@app.route('/blog/<post_title>/update', methods=['GET', 'POST'])
+def update(post_title):
+	if not current_user.is_authenticated:
+		return redirect(url_for('login'))
+
+	form = PostForm()
+	post = get_post(post_title)
+	
+	if form.validate_on_submit():
+		post.title = form.title.data
+		post.subtitle = form.subtitle.data
+		post.content = form.content.data
+		db.session.commit()
+	elif request.method == 'GET':
+		form.title.data = post.title
+		form.subtitle.data = post.subtitle
+		form.content.data = post.content
+
+	return render_template('create.html', form=form, legend='Update Post')
 
 @app.route('/blog/<post_title>/delete', methods=['GET', 'POST'])
 def delete(post_title):
