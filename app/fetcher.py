@@ -1,18 +1,27 @@
-import requests, json, math, praw
+from math import ceil
+from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
+import requests
+import json
+import praw
 from app import db
 from app.models import Post, Fetch
-from apscheduler.schedulers.background import BackgroundScheduler
 
 
 sched = BackgroundScheduler()
 
 
 class BackgroundFetcher():
+	""" Class which allows data to be fetched from APIs in the background. """
 	def __init__(self, fetch_list=None):
+		"""
+		Args:
+			fetch_list (list): List of data fetched via API calls
+		"""
 		self.fetch_list = []
 
 	def fetch_all(self):
+		""" Populates fetch_list using necessary functions and stores in database """
 		self.fetch_list = [github_fetcher(), blog_fetcher(), reddit_fetcher()]
 		fetch = Fetch.query.first()
 		fetch.repo_title, fetch.repo_time = self.fetch_list[0]
@@ -21,11 +30,18 @@ class BackgroundFetcher():
 		db.session.commit()
 
 	def background_scheduler(self):
+		""" Starts the BackgroundScheduler with a 10 second interval between executions """
 		sched.add_job(self.fetch_all, 'interval', seconds=10)
 		sched.start()
 
 
 def db_to_list():
+	"""
+	Turns database entries into list
+
+	Returns:
+		fetch_list (list): List of data stored in database, fetched via API calls
+	"""
 	fetch = Fetch.query.first()
 	fetch_list = [fetch.repo_title, fetch.repo_time,
 				  fetch.blog_title, fetch.blog_url,
@@ -34,6 +50,15 @@ def db_to_list():
 
 
 def get_post(post_title):
+	"""
+	Gets post from database given title of blog post
+
+	Args:
+		post_title (string): Title of given blog post
+
+	Returns:
+		post (database row): Title, subtitle, content, and date posted of given blog post
+	"""
 	db_titles = [post.title.replace(" ", "-") for post in Post.query.all()]
 
 	if post_title not in db_titles:
@@ -46,6 +71,17 @@ def get_post(post_title):
 
 
 def get_time_difference(current_time, new_time, var):
+	"""
+	Gets the difference between two times for a certain inquiry
+
+	Args:
+		current_time (datetime object): Current time in UTC
+		new_time (datetime object): Time of latest comment/commit/blog post in UTC
+		var (string): Either the latest repo or latest comment
+
+	Returns:
+		return_list (list): List of repo name/comment permalink and the time since latest commit/comment
+	"""
 	return_list = [var]
 	difference = current_time - new_time
 	minutes = difference.seconds//60
@@ -53,24 +89,25 @@ def get_time_difference(current_time, new_time, var):
 	days = difference.days
 	minutes -= 60*hours
 
-	# If minutes greater than 60, use minutes
-	if days > 1:
+	if days > 1: # If total days greater than 1, display days
 		return_list.append(f'{days} days')
-	elif (60*hours + minutes) < 60:
+	elif (60*hours + minutes) < 60: # If total minutes is less than 60, display minutes
 		return_list.append(f'{minutes} minutes')
-	# If minutes greater than 60, use hours
-	else: #(60* hours + minutes) > 60:
-		return_list.append(f'{math.ceil(hours)} hours')
-
-
+	else: # If total minutes is greater than 60, display hours
+		return_list.append(f'{ceil(hours)} hours')
 
 	return return_list
 
 
 def github_fetcher():
+	"""
+	Gets latest GitHub commit
 
-	# Get token from .txt file
-	with open('tokens.txt', 'r') as f:
+	Returns:
+		return_list (list): List of repo name and time since latest commit
+
+	"""	
+	with open('tokens.txt', 'r') as f: # Get token from .txt file
 		token = f.readline().strip()
 
 	url = 'https://api.github.com/users/hellomusa/repos'
@@ -100,10 +137,9 @@ def github_fetcher():
 				commit_date_dt = datetime.strptime(commit_date, "%Y-%m-%dT%H:%M:%SZ")
 				commits[repo_name] = commit_date_dt
 			else:
-				print('Something went wrong.')
+				print('INVALID RESPONSE')
 
 		# Compare current time with latest commit time, return the difference
-
 		commit_times = [commits[repo] for repo in commits]
 		newest_commit_time = max(commit_times)
 
@@ -120,18 +156,31 @@ def github_fetcher():
 		return return_list
 
 	else:
-		print('Something went wrong.')
+		print('INVALID RESPONSE')
 
 
 def blog_fetcher():
+	"""
+	Gets latest blog post from website blog
+
+	Returns:
+		return_list (list): List of blog post title and its URL
+	"""
 	latest_post = Post.query.all()[-1]
 	post_title = latest_post.title
 	post_url = post_title.replace(" ", "-")
+	return_list = [post_title, post_url]
 
-	return [post_title, post_url]
+	return return_list
 
 
 def reddit_fetcher():
+	"""
+	Gets latest Reddit comment
+
+	Returns:
+		return_list (list): List of comment permalink and time since comment
+	"""
 	with open('tokens.txt', 'r') as f:
 		f.readline()
 		f.readline()
