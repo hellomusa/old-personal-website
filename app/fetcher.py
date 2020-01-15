@@ -5,7 +5,7 @@ import requests
 import json
 import praw
 from app import db
-from app.models import Post, Fetch
+from .models import Post, Fetch
 
 
 sched = BackgroundScheduler()
