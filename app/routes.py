@@ -2,9 +2,9 @@ from flask import render_template, url_for, redirect, request, Markup
 from flask_login import login_user, current_user, login_required
 from markdown import markdown
 from app import app, db, bcrypt
-from app.fetcher import *
-from app.forms import LoginForm, PostForm
-from app.models import User, Post, Fetch
+from .fetcher import *
+from .forms import LoginForm, PostForm
+from .models import User, Post, Fetch
 
 
 @app.route("/")
@@ -54,18 +54,20 @@ def update(post_title):
 
 	form = PostForm()
 	post = get_post(post_title)
-	
+
 	if form.validate_on_submit():
 		post.title = form.title.data
 		post.subtitle = form.subtitle.data
 		post.content = form.content.data
 		db.session.commit()
+		return redirect(url_for('home'))
 	elif request.method == 'GET':
 		form.title.data = post.title
 		form.subtitle.data = post.subtitle
 		form.content.data = post.content
 
 	return render_template('create.html', form=form, legend='Update Post')
+
 
 @app.route('/blog/<post_title>/delete', methods=['GET', 'POST'])
 def delete(post_title):
