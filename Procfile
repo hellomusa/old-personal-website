@@ -1,1 +1,1 @@
-web: gunicorn app:run
+waitress.serve(app, listen=':8000')
