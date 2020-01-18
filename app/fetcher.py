@@ -4,7 +4,7 @@ from datetime import datetime
 import requests
 import json
 import praw
-import os
+from os import environ
 from app import db
 from .models import Post, Fetch
 
