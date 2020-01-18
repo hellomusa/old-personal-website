@@ -1,1 +1,1 @@
-waitress.serve(app, listen=':8000')
+web: waitress-serve —port=$PORT nuncio:app
