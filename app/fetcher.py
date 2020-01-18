@@ -113,6 +113,8 @@ def github_fetcher():
 
 	url = 'https://api.github.com/users/hellomusa/repos'
 	GITHUB_TOKEN = environ.get('GITHUB_TOKEN')
+
+	print("********** GITHUB TOKEN ********** :::: ", GITHUB_TOKEN)
 	params = {'access_token': GITHUB_TOKEN}
 
 	repo_names = []
@@ -188,8 +190,11 @@ def reddit_fetcher():
 	# 	CLIENT_ID = f.readline().strip()
 	# 	CLIENT_SECRET = f.readline().strip()
 
-	reddit = praw.Reddit(user_agent='Comment Extraction by /u/hellomusa', 
+	try:
+		reddit = praw.Reddit(user_agent='Comment Extraction by /u/hellomusa', 
 						client_id=environ.get('CLIENT_ID'), client_secret=environ.get('CLIENT_SECRET'))
+	except:
+		return_list = ['ERROR', 'ERROR']
 
 	user = reddit.redditor('hellomusa')
 	comments = [comment for comment in user.comments.new()]
