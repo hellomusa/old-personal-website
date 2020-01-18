@@ -1,1 +1,1 @@
-web: waitress-serve --port=8080 personal-website:app
+web: waitress-serve --port=$PORT personal-website:app
