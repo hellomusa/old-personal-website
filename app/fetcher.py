@@ -193,19 +193,19 @@ def reddit_fetcher():
 	try:
 		reddit = praw.Reddit(user_agent='Comment Extraction by /u/hellomusa', 
 						client_id=environ.get('CLIENT_ID'), client_secret=environ.get('CLIENT_SECRET'))
+		user = reddit.redditor('hellomusa')
+		comments = [comment for comment in user.comments.new()]
+		latest_comment = comments[0]
+		link_permalink = latest_comment.permalink
+		comment_date = datetime.utcfromtimestamp(latest_comment.created_utc)
+
+		current_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+		current_time_dt = datetime.strptime(current_time, "%Y-%m-%d %H:%M:%S")
+
+		return_list = get_time_difference(current_time_dt, comment_date, link_permalink)
+
 	except:
 		return_list = ['ERROR', 'ERROR']
-
-	user = reddit.redditor('hellomusa')
-	comments = [comment for comment in user.comments.new()]
-	latest_comment = comments[0]
-	link_permalink = latest_comment.permalink
-	comment_date = datetime.utcfromtimestamp(latest_comment.created_utc)
-
-	current_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-	current_time_dt = datetime.strptime(current_time, "%Y-%m-%d %H:%M:%S")
-
-	return_list = get_time_difference(current_time_dt, comment_date, link_permalink)
 
 	return return_list
 
