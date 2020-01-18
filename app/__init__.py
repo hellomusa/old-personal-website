@@ -4,6 +4,7 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flaskext.markdown import Markdown
 from os import environ
+from waitress import serve
 
 # Get secret key from .txt file
 # with open('tokens.txt', 'r') as f:
