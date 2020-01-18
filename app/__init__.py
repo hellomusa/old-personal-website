@@ -4,7 +4,6 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flaskext.markdown import Markdown
 from os import environ
-from waitress import serve
 
 # Get secret key from .txt file
 # with open('tokens.txt', 'r') as f:
@@ -14,11 +13,13 @@ from waitress import serve
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SECRET_KEY'] = environ.get('SECRET_KEY')
+print(app.config['SECRET_KEY'])
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 md = Markdown(app)
+
 
 from app.fetcher import *
 
