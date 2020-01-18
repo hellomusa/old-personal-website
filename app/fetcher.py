@@ -31,8 +31,8 @@ class BackgroundFetcher():
 		db.session.commit()
 
 	def background_scheduler(self):
-		""" Starts the BackgroundScheduler with a 10 second interval between executions """
-		sched.add_job(self.fetch_all, 'interval', seconds=10)
+		""" Starts the BackgroundScheduler with a 30 second interval between executions """
+		sched.add_job(self.fetch_all, 'interval', seconds=30)
 		sched.start()
 
 

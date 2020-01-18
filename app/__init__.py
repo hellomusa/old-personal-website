@@ -13,7 +13,6 @@ from os import environ
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SECRET_KEY'] = environ.get('SECRET_KEY')
-print(app.config['SECRET_KEY'])
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
