@@ -111,8 +111,8 @@ def github_fetcher():
 	# 	token = f.readline().strip()
 
 	url = 'https://api.github.com/users/hellomusa/repos'
-	github_token = token
-	params = {'access_token': environ.get('GITHUB_TOKEN')}
+	GITHUB_TOKEN = environ.get('GITHUB_TOKEN')
+	params = {'access_token': GITHUB_TOKEN}
 
 	repo_names = []
 	commits = {}
