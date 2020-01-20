@@ -10,6 +10,7 @@ from .models import User, Post, Fetch
 @app.route("/")
 def home():
 	repo_name, repo_time, blog_name, blog_url, comment_url, comment_time = db_to_list()
+	#repo_name, repo_time, blog_name, blog_url, comment_url, comment_time = [1,2,3,4,5,6]
 	return render_template('home.html', 
 							repo_name=repo_name, 
 							repo_time=repo_time, 

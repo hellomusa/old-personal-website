@@ -1,20 +1,22 @@
 from flask import Flask
 from flask_bcrypt import Bcrypt
+from flask_heroku import Heroku
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flaskext.markdown import Markdown
-from flask_migrate import Migrate
 from os import environ
 
 #Get secret key from .txt file
-with open('tokens.txt', 'r') as f:
-	f.readline()
-	SECRET_KEY = f.readline().strip()
+# with open('tokens.txt', 'r') as f:
+# 	f.readline()
+# 	SECRET_KEY = f.readline().strip()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = SECRET_KEY
-#app.config['SECRET_KEY'] = environ.get('SECRET_KEY')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+#app.config['SECRET_KEY'] = SECRET_KEY
+app.config['SECRET_KEY'] = environ.get('SECRET_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URL')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+heroku = Heroku(app)
 db = SQLAlchemy(app)
 # igrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
