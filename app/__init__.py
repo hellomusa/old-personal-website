@@ -6,14 +6,16 @@ from flaskext.markdown import Markdown
 from os import environ
 
 #Get secret key from .txt file
-with open('tokens.txt', 'r') as f:
-	f.readline()
-	SECRET_KEY = f.readline().strip()
+# with open('tokens.txt', 'r') as f:
+# 	f.readline()
+# 	SECRET_KEY = f.readline().strip()
 
 app = Flask(__name__)
 #app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SECRET_KEY'] = environ.get('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URL')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = flaskext
+heroku = Heroku(app)
 db = SQLAlchemy(app)
 # igrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
