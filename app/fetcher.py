@@ -109,13 +109,12 @@ def github_fetcher():
 		return_list (list): List of repo name and time since latest commit
 
 	"""	
-	with open('tokens.txt', 'r') as f:
-		token = f.readline().strip()
+	# with open('tokens.txt', 'r') as f:
+	# 	token = f.readline().strip()
 
 	url = 'https://api.github.com/users/hellomusa/repos'
 	#GITHUB_TOKEN = environ.get('GITHUB_TOKEN')
 
-	print("********** GITHUB TOKEN ********** :::: ", token)
 	params = {'access_token': token}
 
 	repo_names = []
@@ -185,15 +184,15 @@ def reddit_fetcher():
 	Returns:
 		return_list (list): List of comment permalink and time since comment
 	"""
-	with open('tokens.txt', 'r') as f:
-		f.readline()
-		f.readline()
-		CLIENT_ID = f.readline().strip()
-		CLIENT_SECRET = f.readline().strip()
+	# with open('tokens.txt', 'r') as f:
+	# 	f.readline()
+	# 	f.readline()
+	# 	CLIENT_ID = f.readline().strip()
+	# 	CLIENT_SECRET = f.readline().strip()
 
 	try:
 		reddit = praw.Reddit(user_agent='Comment Extraction by /u/hellomusa', 
-						client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
+						client_id=environ.get('CLIENT_ID'), client_secret=environ.get('CLIENT_SECRET'))
 		user = reddit.redditor('hellomusa')
 		comments = [comment for comment in user.comments.new()]
 		latest_comment = comments[0]
