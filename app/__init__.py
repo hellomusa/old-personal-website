@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_bcrypt import Bcrypt
+from flask_heroku import Heroku
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flaskext.markdown import Markdown
