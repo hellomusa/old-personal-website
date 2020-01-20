@@ -50,7 +50,7 @@ def db_to_list():
 	return fetch_list
 
 
-def get_time_difference(current_time, new_time, var):
+def get_time_difference(current_time, new_time):
 	"""
 	Gets the difference between two times for a certain inquiry
 
