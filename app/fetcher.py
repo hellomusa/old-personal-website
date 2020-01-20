@@ -24,7 +24,6 @@ class BackgroundFetcher():
 	def fetch_all(self):
 		""" Populates fetch_list using necessary functions and stores in database """
 		self.fetch_list = [github_fetcher(), blog_fetcher(), reddit_fetcher()]
-		print(self.fetch_list)
 		fetch = Fetch.query.first()
 		fetch.repo_title, fetch.repo_time = self.fetch_list[0]
 		fetch.blog_title, fetch.blog_url = self.fetch_list[1]
