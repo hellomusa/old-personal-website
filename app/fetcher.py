@@ -50,6 +50,32 @@ def db_to_list():
 	return fetch_list
 
 
+def get_time_difference(current_time, new_time, var):
+	"""
+	Gets the difference between two times for a certain inquiry
+
+	Args:
+		current_time (datetime object): Current time in UTC
+		new_time (datetime object): Time of latest comment/commit/blog post in UTC
+		var (string): Either the latest repo or latest comment
+
+	Returns:
+		return_list (list): List of repo name/comment permalink and the time since latest commit/comment
+	"""
+	difference = current_time - new_time
+	minutes = difference.seconds//60
+	hours = minutes//60
+	days = difference.days
+	minutes -= 60*hours
+
+	if days > 1: # If total days greater than 1, display days
+		return f'{days} days'
+	elif (60*hours + minutes) < 60: # If total minutes is less than 60, display minutes
+		return f'{minutes} minutes'
+	else: # If total minutes is greater than 60, display hours
+		return f'{ceil(hours)} hours'
+
+
 def get_post(post_title):
 	"""
 	Gets post from database given title of blog post
@@ -71,35 +97,6 @@ def get_post(post_title):
 	return post
 
 
-def get_time_difference(current_time, new_time, var):
-	"""
-	Gets the difference between two times for a certain inquiry
-
-	Args:
-		current_time (datetime object): Current time in UTC
-		new_time (datetime object): Time of latest comment/commit/blog post in UTC
-		var (string): Either the latest repo or latest comment
-
-	Returns:
-		return_list (list): List of repo name/comment permalink and the time since latest commit/comment
-	"""
-	return_list = [var]
-	difference = current_time - new_time
-	minutes = difference.seconds//60
-	hours = minutes//60
-	days = difference.days
-	minutes -= 60*hours
-
-	if days > 1: # If total days greater than 1, display days
-		return_list.append(f'{days} days')
-	elif (60*hours + minutes) < 60: # If total minutes is less than 60, display minutes
-		return_list.append(f'{minutes} minutes')
-	else: # If total minutes is greater than 60, display hours
-		return_list.append(f'{ceil(hours)} hours')
-
-	return return_list
-
-
 def github_fetcher():
 	"""
 	Gets latest GitHub commit
@@ -110,7 +107,6 @@ def github_fetcher():
 	"""	
 	url = 'https://api.github.com/users/hellomusa/repos'
 	GITHUB_TOKEN = environ.get('GITHUB_TOKEN')
-
 	params = {'access_token': GITHUB_TOKEN}
 
 	repo_names = []
@@ -118,7 +114,6 @@ def github_fetcher():
 
 	try:
 		response = requests.get(url, params=params)
-
 		data = json.loads(response.content)
 
 		for repo in data:
@@ -128,12 +123,10 @@ def github_fetcher():
 			commit_url = f'https://api.github.com/repos/hellomusa/{repo_name}/commits/master'
 			try:
 				response = requests.get(commit_url, params=params)
-
 				data = json.loads(response.content)
 				commit_date = data['commit']['author']['date']
 				commit_date_dt = datetime.strptime(commit_date, "%Y-%m-%dT%H:%M:%SZ")
 				commits[repo_name] = commit_date_dt
-
 			except requests.exceptions.RequestException as e:
 				return ['ERROR', 'ERROR']
 
@@ -147,14 +140,13 @@ def github_fetcher():
 
 		current_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
 		current_time_dt = datetime.strptime(current_time, "%Y-%m-%d %H:%M:%S")
-
-		return_list = get_time_difference(current_time_dt, newest_commit_time, newest_commit_repo)
+		time = get_time_difference(current_time_dt, newest_commit_time)
+		return_list = [newest_commit_repo, time]
 
 		return return_list
 
 	except requests.exceptions.RequestException as e:
 		return ['ERROR', 'ERROR']
-
 
 
 
@@ -182,22 +174,23 @@ def reddit_fetcher():
 	"""
 	try:
 		reddit = praw.Reddit(user_agent='Comment Extraction by /u/hellomusa', 
-						client_id=environ.get('CLIENT_ID'), client_secret=environ.get('CLIENT_SECRET'))
+							 client_id=environ.get('CLIENT_ID'), client_secret=environ.get('CLIENT_SECRET'))
 		user = reddit.redditor('hellomusa')
 		comments = [comment for comment in user.comments.new()]
 		latest_comment = comments[0]
 		link_permalink = latest_comment.permalink
 		comment_date = datetime.utcfromtimestamp(latest_comment.created_utc)
-
 		current_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
 		current_time_dt = datetime.strptime(current_time, "%Y-%m-%d %H:%M:%S")
 
-		return_list = get_time_difference(current_time_dt, comment_date, link_permalink)
+		time = get_time_difference(current_time_dt, comment_date)
+		return_list = [link_permalink, time]
+
+		return return_list
 
 	except:
 		return_list = ['ERROR', 'ERROR']
 
-	return return_list
 
 
 
