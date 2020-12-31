@@ -112,6 +112,8 @@ def github_fetcher():
 	repo_names = []
 	commits = {}
 
+	return ['TEST', 'TEST']
+
 	try:
 		response = requests.get(url, params=params)
 		data = json.loads(response.content)
