@@ -114,6 +114,7 @@ def github_fetcher():
 
 	try:
 		response = requests.get(url, headers=headers)
+		print("getting repos", response.status_code)
 		data = json.loads(response.content)
 
 		for repo in data:
@@ -123,6 +124,7 @@ def github_fetcher():
 			commit_url = f'https://api.github.com/repos/hellomusa/{repo_name}/commits/master'
 			try:
 				response = requests.get(commit_url, headers=headers)
+				print("getting commits", response.status_code)
 				data = json.loads(response.content)
 				commit_date = data['commit']['author']['date']
 				commit_date_dt = datetime.strptime(commit_date, "%Y-%m-%dT%H:%M:%SZ")
