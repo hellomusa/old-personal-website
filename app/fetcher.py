@@ -107,13 +107,13 @@ def github_fetcher():
 	"""	
 	url = 'https://api.github.com/users/hellomusa/repos'
 	GITHUB_TOKEN = environ.get('GITHUB_TOKEN')
-	params = {'access_token': GITHUB_TOKEN}
+	headers = {'access_token': GITHUB_TOKEN}
 
 	repo_names = []
 	commits = {}
 
 	try:
-		response = requests.get(url, params=params)
+		response = requests.get(url, headers=headers)
 		data = json.loads(response.content)
 
 		for repo in data:
@@ -122,7 +122,7 @@ def github_fetcher():
 		for repo_name in repo_names:
 			commit_url = f'https://api.github.com/repos/hellomusa/{repo_name}/commits/master'
 			try:
-				response = requests.get(commit_url, params=params)
+				response = requests.get(commit_url, headers=headers)
 				data = json.loads(response.content)
 				commit_date = data['commit']['author']['date']
 				commit_date_dt = datetime.strptime(commit_date, "%Y-%m-%dT%H:%M:%SZ")
